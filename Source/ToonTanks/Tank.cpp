@@ -5,6 +5,7 @@
 #include "Camera/CameraComponent.h"
 #include "Components/InputComponent.h"
 #include "Kismet/GameplayStatics.h"
+
 // Constructor
 ATank::ATank()
 {
@@ -24,13 +25,35 @@ void ATank::SetupPlayerInputComponent(UInputComponent *PlayerInputComponent)
   PlayerInputComponent->BindAxis(TEXT("Turn"), this, &ATank::Turn);
 }
 
+void ATank::Tick(float DeltaTime)
+{
+  Super::Tick(DeltaTime);
+
+  if (PlayerControllerRef)
+  {
+    FHitResult HitResult;
+    PlayerControllerRef->GetHitResultUnderCursor(
+        ECollisionChannel::ECC_Visibility,
+        false,
+        HitResult);
+
+    RotateTurret(HitResult.ImpactPoint);
+  }
+}
+
+void ATank::BeginPlay()
+{
+  Super::BeginPlay();
+
+  PlayerControllerRef = Cast<APlayerController>(GetController());
+}
+
 void ATank::Move(float Value)
 {
   FVector DeltaLocation = FVector::ZeroVector;
   // X = Value * DeltaTime * Speed
   DeltaLocation.X = Value * Speed * UGameplayStatics::GetWorldDeltaSeconds(this);
   AddActorLocalOffset(DeltaLocation, true);
-  // UE_LOG(LogTemp, Display, TEXT("The value is: %f"), Value);
 }
 
 void ATank::Turn(float Value)
