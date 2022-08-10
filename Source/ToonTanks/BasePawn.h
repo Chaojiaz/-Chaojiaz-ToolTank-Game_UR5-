@@ -16,7 +16,6 @@ public:
 	ABasePawn();
 
 protected:
-
 	void RotateTurret(FVector LookAtTarget);
 	void Fire();
 
@@ -30,7 +29,10 @@ private:
 
 	UPROPERTY(VisibleAnywhere, BluePrintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent *TurrentMesh;
-	
+
 	UPROPERTY(VisibleAnywhere, BluePrintReadOnly, Category = "Components", meta = (AllowPrivateAccess = "true"))
 	USceneComponent *ProjectileSpawnPoint;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Combat")
+	TSubclassOf<class AProjectile> ProjectileClass;
 };
