@@ -13,7 +13,6 @@ ABasePawn::ABasePawn()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CapsuleComp = CreateDefaultSubobject<UCapsuleComponent>(TEXT("Capsule Collider"));
-	// Specify the CapsuleComp as the root component
 	RootComponent = CapsuleComp;
 
 	BaseMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Base Mesh"));
@@ -30,18 +29,16 @@ void ABasePawn::RotateTurret(FVector LookAtTarget)
 {
 	FVector ToTarget = LookAtTarget - TurrentMesh->GetComponentLocation();
 	FRotator LookAtRotation = FRotator(0.f, ToTarget.Rotation().Yaw, 0.f);
-
 	TurrentMesh->SetWorldRotation(
-			FMath::RInterpTo(
-					TurrentMesh->GetComponentRotation(),
-					LookAtRotation,
-					UGameplayStatics::GetWorldDeltaSeconds(this), 25.f));
+			FMath::RInterpTo(TurrentMesh->GetComponentRotation(),
+											 LookAtRotation, UGameplayStatics::GetWorldDeltaSeconds(this),
+											 25.f));
 }
 
 void ABasePawn::Fire()
 {
 	FVector Location = ProjectileSpawnPoint->GetComponentLocation();
 	FRotator Rotation = ProjectileSpawnPoint->GetComponentRotation();
-
-	GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Location, Rotation);
+	auto Projectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, Location, Rotation);
+	Projectile->SetOwner(this);
 }
